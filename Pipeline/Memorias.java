@@ -1,6 +1,7 @@
 package Pipeline;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Memorias {
     public ArrayList<Registrador> conteudo;
@@ -24,6 +25,16 @@ public class Memorias {
 
     ArrayList<Registrador> getMemorias(){
         return this.conteudo;
+    }
+
+    public void imprimirParteMemoria(){
+        String aux = "";
+        for(int i = 0; i < this.numeroCelulas; i++){
+            if(Conversor.binToInt(this.conteudo.get(i).conteudo) != 0){
+                aux += Conversor.binToInt(this.conteudo.get(i).conteudo) + "\n";
+            }
+        }
+        System.out.println(aux);
     }
 
     @Override

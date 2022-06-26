@@ -1,5 +1,6 @@
 package Pipeline;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class CPU {
     private Registrador PC;
@@ -32,6 +33,15 @@ public class CPU {
         this.DMemory = new Memorias(32, 1024); 
     }
 
+    //Definição das operações que serão executadas
+    private void setarOperacoes(){
+        //Definição de instrução de soma: reg(5)=5 -> addi x5,x2,3 //x5=x2+3
+        ArrayList<Integer> operacao = new ArrayList<>(Arrays.asList(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 
+         0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 1));
+         //Salva a instrução na memória de instruções
+        this.IMemory.setMemorias(operacao, 0);
+    }
+
     private void init(){
         this.IFIDIR.setConteudo(Constantes.NOP);
         this.IDEXIR.setConteudo(Constantes.NOP);
@@ -40,6 +50,7 @@ public class CPU {
         for(int i = 0; i <= 31; i++){
             this.Regs.setMemorias(Conversor.intToBin(i), i);
         }
+        setarOperacoes();
     }
 
     public void run(){
@@ -53,16 +64,24 @@ public class CPU {
         Registrador MEMWBop = new Registrador(7);
         Registrador MEMWBrd = new Registrador(5);
 
+        Integer iteracao = 0;
+
         while(true){
             Integer enderecoNovaInstrucao;
             Integer enderecoA;
             Integer enderecoB;
             Integer enderecoDMemory;
 
+            System.out.println("Iteracao: " + iteracao);
+
             //Primeira instrução é buscada e incrementa PC
+            System.out.println("Estagio IF - obtencao da instrucao");
             enderecoNovaInstrucao = Conversor.binToInt(Conversor.shiftRight(2, this.PC.conteudo));
             this.IFIDIR.setConteudo(this.IMemory.conteudo.get(enderecoNovaInstrucao).conteudo);
             this.PC.inc(4);
+
+            System.out.println("Instrucao obtida: " + this.IFIDIR.toString());
+            System.out.println("PC: " + Conversor.binToInt(this.PC.conteudo));
 
             /*Fazendo o assign dos wires
              * Conversão do índice em binário e do índice do ArrayList
@@ -71,7 +90,7 @@ public class CPU {
              * 
              * Posição no índice em binário
              * 31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 09 08 07 06 05 04 03 02 01 00
-             */ 
+             */
             IFIDrs1.setConteudo(this.IFIDIR.getBits(12, 16));
             IFIDrs2.setConteudo(this.IFIDIR.getBits(7, 11));
             IDEXop.setConteudo(this.IDEXIR.getBits(25, 31));
@@ -79,29 +98,41 @@ public class CPU {
             MEMWBop.setConteudo(this.MEMWBIR.getBits(25, 31));
             MEMWBrd.setConteudo(this.MEMWBIR.getBits(20, 24));
 
+            
+            //Busca dos registradores A e B
+            System.out.println("Estagio ID - Decodificacao da instrucao e leitura dos registradores");
+            enderecoA = Conversor.binToInt(IFIDrs1.conteudo);
+            this.IDEXA.setConteudo(this.Regs.conteudo.get(enderecoA).conteudo);
+            
+            enderecoB = Conversor.binToInt(IFIDrs2.conteudo);
+            this.IDEXB.setConteudo(this.Regs.conteudo.get(enderecoB).conteudo);
+            
+            //Atualização do IR
+            this.IDEXIR.setConteudo(this.IFIDIR.conteudo);
+            System.out.println("IDEXIR: " + IDEXIR.toString());
+
             Integer Ain = Conversor.binToInt(IDEXA.conteudo);
             Integer Bin = Conversor.binToInt(IDEXB.conteudo);
 
-            //Busca dos registradores A e B
-            enderecoA = Conversor.binToInt(IFIDrs1.conteudo);
-            this.IDEXA.setConteudo(this.Regs.conteudo.get(enderecoA).conteudo);
+            System.out.println("IDEXA: " + Conversor.binToInt(IDEXA.conteudo));
+            System.out.println("IDEXB: " + Conversor.binToInt(IDEXB.conteudo));
 
-            enderecoB = Conversor.binToInt(IFIDrs2.conteudo);
-            this.IDEXB.setConteudo(this.Regs.conteudo.get(enderecoB).conteudo);
-
-            //Atualização do IR
-            this.IDEXIR.setConteudo(this.IFIDIR.conteudo);
 
             //Realização do cálculo do endereço ou execução de operação na ULA
+            System.out.println("Estagio EX - Execucao da instrucao ou calculo de endereco");
+            System.out.println("IDEXop: " + Conversor.binToInt(IDEXop.conteudo));
             if(IDEXop.compareTo(Constantes.LD)){
+                System.out.println("Instrucao LD");
                 Integer soma = 0;
                 ArrayList<Integer> aux;
                 aux = Conversor.replicar(53, this.IDEXIR.getBits(00, 00).get(0));
                 aux = Conversor.concatenarArray(aux, this.IDEXIR.getBits(1, 11));
                 soma = Conversor.binToInt(IDEXA.conteudo) + Conversor.binToInt(aux);
                 this.EXMEMALUOut.setConteudo(Conversor.intToBin(soma));
+                System.out.println("EXMEMALUOut: " + Conversor.binToInt(this.EXMEMALUOut.conteudo));
             }
             else if(IDEXop.compareTo(Constantes.SD)){
+                System.out.println("Instrucao SD");
                 Integer soma = 0;
                 ArrayList<Integer> aux;
                 aux = Conversor.replicar(53, this.IDEXIR.getBits(00, 00).get(0));
@@ -109,11 +140,14 @@ public class CPU {
                 aux = Conversor.concatenarArray(aux, this.IDEXIR.getBits(20, 24));
                 soma = Conversor.binToInt(IDEXA.conteudo) + Conversor.binToInt(aux);
                 this.EXMEMALUOut.setConteudo(Conversor.intToBin(soma));
+                System.out.println("EXMEMALUOut: " + Conversor.binToInt(this.EXMEMALUOut.conteudo));
             }
             else if(IDEXop.compareTo(Constantes.ALUop)){
+                System.out.println("Instrucao ALUop");
                 if(Conversor.binToInt(this.IDEXIR.getBits(0, 6)) == 0){
                     Integer saida = Ain + Bin;
                     this.EXMEMALUOut.setConteudo(Conversor.intToBin(saida));
+                    System.out.println("EXMEMALUOut: " + Conversor.binToInt(this.EXMEMALUOut.conteudo));
                 }
             }
 
@@ -121,7 +155,11 @@ public class CPU {
             this.EXMEMIR.setConteudo(IDEXIR.conteudo);
             this.EXMEMB.setConteudo(IDEXB.conteudo);
 
+            System.out.println("EXMEMIR: " + this.EXMEMIR.toString());
+            System.out.println("EXMEMB: " + this.EXMEMB.toString());
+
             //Estágio da memória do pipeline
+            System.out.println("Estagio MEM - Acessa os dados da memoria");
             if(EXMEMop.compareTo(Constantes.ALUop)){
                 MEMWBValue.setConteudo(EXMEMALUOut.conteudo);
             }
@@ -135,14 +173,24 @@ public class CPU {
                 this.DMemory.setMemorias(EXMEMB.conteudo, enderecoShift);
             }
 
+            System.out.println("MEMWBVALUE: " + this.MEMWBValue.toString());
+            System.out.println("DMemory: ");
+            this.DMemory.imprimirParteMemoria();
+
             //Passa o IR a frente
             this.MEMWBIR.setConteudo(EXMEMIR.conteudo);
+            System.out.println("MEMWBIR: " + this.MEMWBIR.toString());
 
             //Estágio WB
+            System.out.println("Estagio WB - Escreve o resultado");
             if((MEMWBop.compareTo(Constantes.LD) || MEMWBop.compareTo(Constantes.ALUop)) && Conversor.binToInt(MEMWBrd.conteudo) != 0){
                 this.Regs.setMemorias(MEMWBValue.conteudo, Conversor.binToInt(MEMWBrd.conteudo));
+                System.out.println("Regs: ");
+                this.Regs.imprimirParteMemoria();
             }
+            iteracao++;
+            Menu.pressionarEnterParaContinuar();
+            Menu.limparTela();
         }
-
     }
 }
