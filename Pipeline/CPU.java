@@ -35,11 +35,41 @@ public class CPU {
 
     //Definição das operações que serão executadas
     private void setarOperacoes(){
+
         //Definição de instrução de soma: reg(5)=5 -> addi x5,x2,3 //x5=x2+3
-        ArrayList<Integer> operacao = new ArrayList<>(Arrays.asList(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 
+        ArrayList<Integer> operacao1 = new ArrayList<>(Arrays.asList(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 
          0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 1));
-         //Salva a instrução na memória de instruções
-        this.IMemory.setMemorias(operacao, 0);
+         //Definição de instrução de soma reg(6)=10->addi x6,x0,10/x6=x0+10
+         ArrayList<Integer> operacao2 = new ArrayList<>(Arrays.asList(0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0,
+         0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 1, 1));
+         //Definição de instrução de soma reg(10)=20->addi x10,x0,20
+         ArrayList<Integer> operacao3 = new ArrayList<>(Arrays.asList(0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 
+         0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 1, 1));
+         //Definição de instrução sw  x5,0(x10) //Mem[20]=3
+         ArrayList<Integer> operacao4 = new ArrayList<>(Arrays.asList(0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 
+         0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1));
+         //Definição de instrução sw x6,4(x10)//Mem[24]=10
+         ArrayList<Integer> operacao5 = new ArrayList<>(Arrays.asList(0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1,
+         0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 1));
+         //Definição de instrução lw x11, 0(x10)//x11= Mem[20]
+         ArrayList<Integer> operacao6 = new ArrayList<>(Arrays.asList(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+         0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 1, 0, 0, 0, 0, 0, 1, 1));
+         //Definição de instrução lw x12,4(x10)//x12= Mem[24]
+         ArrayList<Integer> operacao7 = new ArrayList<>(Arrays.asList(0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1,
+         0, 1, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1));
+         //Definição de instrução add x14, x11, x12//x14= x11+x12
+         ArrayList<Integer> operacao8 = new ArrayList<>(Arrays.asList(0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1,
+         0, 1, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1));
+
+         //Salva as instruções na memória de intruções
+        this.IMemory.setMemorias(operacao1, 0);
+        this.IMemory.setMemorias(operacao2, 1);
+        this.IMemory.setMemorias(operacao3, 2);
+        this.IMemory.setMemorias(operacao4, 3);
+        this.IMemory.setMemorias(operacao5, 4);
+        this.IMemory.setMemorias(operacao6, 5);
+        this.IMemory.setMemorias(operacao7, 6);
+        this.IMemory.setMemorias(operacao8, 7);
     }
 
     private void init(){
@@ -76,12 +106,13 @@ public class CPU {
 
             //Primeira instrução é buscada e incrementa PC
             System.out.println("Estagio IF - obtencao da instrucao");
+            System.out.println("PC: " + Conversor.binToInt(this.PC.conteudo));
+            
             enderecoNovaInstrucao = Conversor.binToInt(Conversor.shiftRight(2, this.PC.conteudo));
             this.IFIDIR.setConteudo(this.IMemory.conteudo.get(enderecoNovaInstrucao).conteudo);
             this.PC.inc(4);
-
+            
             System.out.println("Instrucao obtida: " + this.IFIDIR.toString());
-            System.out.println("PC: " + Conversor.binToInt(this.PC.conteudo));
 
             /*Fazendo o assign dos wires
              * Conversão do índice em binário e do índice do ArrayList
@@ -93,11 +124,8 @@ public class CPU {
              */
             IFIDrs1.setConteudo(this.IFIDIR.getBits(12, 16));
             IFIDrs2.setConteudo(this.IFIDIR.getBits(7, 11));
-            IDEXop.setConteudo(this.IDEXIR.getBits(25, 31));
             EXMEMop.setConteudo(this.EXMEMIR.getBits(25, 31));
-            MEMWBop.setConteudo(this.MEMWBIR.getBits(25, 31));
             MEMWBrd.setConteudo(this.MEMWBIR.getBits(20, 24));
-
             
             //Busca dos registradores A e B
             System.out.println("Estagio ID - Decodificacao da instrucao e leitura dos registradores");
@@ -109,6 +137,7 @@ public class CPU {
             
             //Atualização do IR
             this.IDEXIR.setConteudo(this.IFIDIR.conteudo);
+            IDEXop.setConteudo(this.IDEXIR.getBits(25, 31));
             System.out.println("IDEXIR: " + IDEXIR.toString());
 
             Integer Ain = Conversor.binToInt(IDEXA.conteudo);
@@ -175,10 +204,11 @@ public class CPU {
 
             System.out.println("MEMWBVALUE: " + this.MEMWBValue.toString());
             System.out.println("DMemory: ");
-            this.DMemory.imprimirParteMemoria();
+            this.DMemory.imprimirParteMemoria("\n");
 
             //Passa o IR a frente
             this.MEMWBIR.setConteudo(EXMEMIR.conteudo);
+            MEMWBop.setConteudo(this.MEMWBIR.getBits(25, 31));
             System.out.println("MEMWBIR: " + this.MEMWBIR.toString());
 
             //Estágio WB
@@ -186,7 +216,7 @@ public class CPU {
             if((MEMWBop.compareTo(Constantes.LD) || MEMWBop.compareTo(Constantes.ALUop)) && Conversor.binToInt(MEMWBrd.conteudo) != 0){
                 this.Regs.setMemorias(MEMWBValue.conteudo, Conversor.binToInt(MEMWBrd.conteudo));
                 System.out.println("Regs: ");
-                this.Regs.imprimirParteMemoria();
+                this.Regs.imprimirParteMemoria(", ");
             }
             iteracao++;
             Menu.pressionarEnterParaContinuar();

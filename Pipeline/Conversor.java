@@ -24,11 +24,13 @@ public class Conversor {
     }
 
     public static ArrayList<Integer> shiftRight(Integer shift, ArrayList<Integer> conteudo){
+        ArrayList<Integer> aux = new ArrayList<>();
+        aux.addAll(conteudo);
         for(int i = 0; i < shift; i++){
-            conteudo.remove(conteudo.size() - 1);
-            conteudo.add(0, 0);
+            aux.remove(aux.size() - 1);
+            aux.add(0, 0);
         }
-        return conteudo;
+        return aux;
     }
 
     public static ArrayList<Integer> replicar(Integer nReplicacoes, Integer valor){

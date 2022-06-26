@@ -27,11 +27,11 @@ public class Memorias {
         return this.conteudo;
     }
 
-    public void imprimirParteMemoria(){
+    public void imprimirParteMemoria(String finalLinha){
         String aux = "";
         for(int i = 0; i < this.numeroCelulas; i++){
             if(Conversor.binToInt(this.conteudo.get(i).conteudo) != 0){
-                aux += Conversor.binToInt(this.conteudo.get(i).conteudo) + "\n";
+                aux += Conversor.binToInt(this.conteudo.get(i).conteudo) + finalLinha;
             }
         }
         System.out.println(aux);

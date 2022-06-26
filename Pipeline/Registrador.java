@@ -1,6 +1,7 @@
 package Pipeline;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Registrador {
     ArrayList<Integer> conteudo;
@@ -20,7 +21,7 @@ public class Registrador {
 
     void setConteudo(ArrayList<Integer> conteudo){
         int j = this.tamanho - 1;
-        for(int i = conteudo.size() - 1; i >= 0; i--){
+        for(int i = conteudo.size() - 1; i > 0; i--){
             this.conteudo.set(j--, conteudo.get(i));
         }
     }
