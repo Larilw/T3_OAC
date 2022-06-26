@@ -3,8 +3,8 @@ package Pipeline;
 import java.util.ArrayList;
 
 public class Memorias {
-    private ArrayList<Registrador> conteudo;
-    private Integer numeroCelulas;
+    public ArrayList<Registrador> conteudo;
+    public Integer numeroCelulas;
 
     Memorias(Integer tamanhoCelula, Integer numeroCelulas){
         this.numeroCelulas = numeroCelulas;

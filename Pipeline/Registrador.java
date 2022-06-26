@@ -25,11 +25,18 @@ public class Registrador {
         }
     }
 
-    void shiftRight(Integer shift){
-        for(int i = 0; i < shift; i++){
-            this.conteudo.remove(this.tamanho - 1);
-            this.conteudo.add(0, 0);
+    ArrayList<Integer> getBits(Integer pinicial, Integer pfinal){
+        ArrayList<Integer> aux = new ArrayList<>();
+        for(int i = pinicial; i <= pfinal; i++){
+            aux.add(this.conteudo.get(i));
         }
+        return aux;
+    }
+
+    void inc(Integer n){
+        Integer conteudo = Conversor.binToInt(this.conteudo);
+        conteudo += n;
+        setConteudo(Conversor.intToBin(conteudo));
     }
 
     @Override

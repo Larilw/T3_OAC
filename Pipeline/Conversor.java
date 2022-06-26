@@ -16,10 +16,18 @@ public class Conversor {
         Integer numero = 0;
         Integer aux = 2;
         numero += valor.get(valor.size() - 1);
-        for(int i = valor.size() - 2; i >= 0; i++){
+        for(int i = valor.size() - 2; i >= 0; i--){
             numero += aux * valor.get(i);
             aux *= 2;
         }
         return numero;
+    }
+
+    public static ArrayList<Integer> shiftRight(Integer shift, ArrayList<Integer> conteudo){
+        for(int i = 0; i < shift; i++){
+            conteudo.remove(conteudo.size() - 1);
+            conteudo.add(0, 0);
+        }
+        return conteudo;
     }
 }
