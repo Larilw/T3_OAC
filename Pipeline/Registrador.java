@@ -33,6 +33,13 @@ public class Registrador {
         return aux;
     }
 
+    Boolean compareTo(ArrayList<Integer> op){
+        if(Conversor.binToInt(op) == Conversor.binToInt(this.conteudo)){
+            return true;
+        }
+        else return false;
+    }
+
     void inc(Integer n){
         Integer conteudo = Conversor.binToInt(this.conteudo);
         conteudo += n;

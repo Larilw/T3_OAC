@@ -1,7 +1,5 @@
 package Pipeline;
 import java.util.ArrayList;
-import Pipeline.Constantes;
-import Pipeline.Registrador;
 
 public class CPU {
     private Registrador PC;
@@ -59,6 +57,7 @@ public class CPU {
             Integer enderecoNovaInstrucao;
             Integer enderecoA;
             Integer enderecoB;
+            Integer enderecoDMemory;
 
             //Primeira instrução é buscada e incrementa PC
             enderecoNovaInstrucao = Conversor.binToInt(Conversor.shiftRight(2, this.PC.conteudo));
@@ -80,6 +79,9 @@ public class CPU {
             MEMWBop.setConteudo(this.MEMWBIR.getBits(25, 31));
             MEMWBrd.setConteudo(this.MEMWBIR.getBits(20, 24));
 
+            Integer Ain = Conversor.binToInt(IDEXA.conteudo);
+            Integer Bin = Conversor.binToInt(IDEXB.conteudo);
+
             //Busca dos registradores A e B
             enderecoA = Conversor.binToInt(IFIDrs1.conteudo);
             this.IDEXA.setConteudo(this.Regs.conteudo.get(enderecoA).conteudo);
@@ -90,7 +92,56 @@ public class CPU {
             //Atualização do IR
             this.IDEXIR.setConteudo(this.IFIDIR.conteudo);
 
-            
+            //Realização do cálculo do endereço ou execução de operação na ULA
+            if(IDEXop.compareTo(Constantes.LD)){
+                Integer soma = 0;
+                ArrayList<Integer> aux;
+                aux = Conversor.replicar(53, this.IDEXIR.getBits(00, 00).get(0));
+                aux = Conversor.concatenarArray(aux, this.IDEXIR.getBits(1, 11));
+                soma = Conversor.binToInt(IDEXA.conteudo) + Conversor.binToInt(aux);
+                this.EXMEMALUOut.setConteudo(Conversor.intToBin(soma));
+            }
+            else if(IDEXop.compareTo(Constantes.SD)){
+                Integer soma = 0;
+                ArrayList<Integer> aux;
+                aux = Conversor.replicar(53, this.IDEXIR.getBits(00, 00).get(0));
+                aux = Conversor.concatenarArray(aux, this.IDEXIR.getBits(1, 6));
+                aux = Conversor.concatenarArray(aux, this.IDEXIR.getBits(20, 24));
+                soma = Conversor.binToInt(IDEXA.conteudo) + Conversor.binToInt(aux);
+                this.EXMEMALUOut.setConteudo(Conversor.intToBin(soma));
+            }
+            else if(IDEXop.compareTo(Constantes.ALUop)){
+                if(Conversor.binToInt(this.IDEXIR.getBits(0, 6)) == 0){
+                    Integer saida = Ain + Bin;
+                    this.EXMEMALUOut.setConteudo(Conversor.intToBin(saida));
+                }
+            }
+
+            //Atualização dos registradores IR e B
+            this.EXMEMIR.setConteudo(IDEXIR.conteudo);
+            this.EXMEMB.setConteudo(IDEXB.conteudo);
+
+            //Estágio da memória do pipeline
+            if(EXMEMop.compareTo(Constantes.ALUop)){
+                MEMWBValue.setConteudo(EXMEMALUOut.conteudo);
+            }
+            else if(EXMEMop.compareTo(Constantes.LD)){
+                enderecoDMemory = Conversor.binToInt(Conversor.shiftRight(2, this.EXMEMALUOut.conteudo));
+                this.MEMWBValue.setConteudo(this.DMemory.conteudo.get(enderecoDMemory).conteudo);
+            }
+            else if(EXMEMop.compareTo(Constantes.SD)){
+                ArrayList<Integer> shiftAluout = Conversor.shiftRight(2, EXMEMALUOut.conteudo);
+                Integer enderecoShift = Conversor.binToInt(shiftAluout);
+                this.DMemory.setMemorias(EXMEMB.conteudo, enderecoShift);
+            }
+
+            //Passa o IR a frente
+            this.MEMWBIR.setConteudo(EXMEMIR.conteudo);
+
+            //Estágio WB
+            if((MEMWBop.compareTo(Constantes.LD) || MEMWBop.compareTo(Constantes.ALUop)) && Conversor.binToInt(MEMWBrd.conteudo) != 0){
+                this.Regs.setMemorias(MEMWBValue.conteudo, Conversor.binToInt(MEMWBrd.conteudo));
+            }
         }
 
     }

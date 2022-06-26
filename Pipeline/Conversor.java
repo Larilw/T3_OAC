@@ -30,4 +30,19 @@ public class Conversor {
         }
         return conteudo;
     }
+
+    public static ArrayList<Integer> replicar(Integer nReplicacoes, Integer valor){
+        ArrayList<Integer> aux = new ArrayList<>();
+        for(int i = 0; i < nReplicacoes; i++){
+            aux.add(valor);
+        }
+        return aux;
+    }
+
+    public static ArrayList<Integer> concatenarArray(ArrayList<Integer> array1, ArrayList<Integer> array2){
+        ArrayList<Integer> aux = new ArrayList<>();
+        aux.addAll(array1);
+        aux.addAll(array2);
+        return aux;
+    }
 }
