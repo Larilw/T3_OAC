@@ -45,20 +45,14 @@ public class CPU {
          //Definição de instrução de soma reg(10)=20->addi x10,x0,20
          ArrayList<Integer> operacao3 = new ArrayList<>(Arrays.asList(0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 
          0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 1, 1));
-         //Definição de instrução sw  x5,0(x10) //Mem[20]=3
-         ArrayList<Integer> operacao4 = new ArrayList<>(Arrays.asList(0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 
-         0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1));
-         //Definição de instrução sw x6,4(x10)//Mem[24]=10
-         ArrayList<Integer> operacao5 = new ArrayList<>(Arrays.asList(0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1,
-         0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 1));
          //Definição de instrução lw x11, 0(x10)//x11= Mem[20]
-         ArrayList<Integer> operacao6 = new ArrayList<>(Arrays.asList(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+         ArrayList<Integer> operacao4 = new ArrayList<>(Arrays.asList(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
          0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 1, 0, 0, 0, 0, 0, 1, 1));
          //Definição de instrução lw x12,4(x10)//x12= Mem[24]
-         ArrayList<Integer> operacao7 = new ArrayList<>(Arrays.asList(0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1,
+         ArrayList<Integer> operacao5 = new ArrayList<>(Arrays.asList(0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1,
          0, 1, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1));
          //Definição de instrução add x14, x11, x12//x14= x11+x12
-         ArrayList<Integer> operacao8 = new ArrayList<>(Arrays.asList(0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1,
+         ArrayList<Integer> operacao6 = new ArrayList<>(Arrays.asList(0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1,
          0, 1, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1));
 
          //Salva as instruções na memória de intruções
@@ -68,10 +62,9 @@ public class CPU {
         this.IMemory.setMemorias(operacao4, 3);
         this.IMemory.setMemorias(operacao5, 4);
         this.IMemory.setMemorias(operacao6, 5);
-        this.IMemory.setMemorias(operacao7, 6);
-        this.IMemory.setMemorias(operacao8, 7);
     }
 
+    //Inicializa alguns registradores
     private void init(){
         this.IFIDIR.setConteudo(Constantes.NOP);
         this.IDEXIR.setConteudo(Constantes.NOP);
@@ -96,6 +89,7 @@ public class CPU {
 
         Integer iteracao = 0;
 
+        //Execução em loop
         while(true){
             Integer enderecoNovaInstrucao;
             Integer enderecoA;

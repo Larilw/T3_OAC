@@ -3,6 +3,7 @@ package Pipeline;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+//Definição das constantes para operações
 public class Constantes {
     public static final ArrayList<Integer> LD = new ArrayList<>(Arrays.asList(0, 0, 0, 0, 0, 1, 1));
     public static final ArrayList<Integer> SD = new ArrayList<>(Arrays.asList(0, 1, 0, 0, 0, 1, 1));

@@ -3,6 +3,8 @@ package Pipeline;
 import java.util.ArrayList;
 
 public class Conversor {
+
+    //Converte Integer em ArrayList com o binario
     public static ArrayList<Integer> intToBin(Integer valor){
         ArrayList<Integer> binario = new ArrayList<>();
         String aux = Integer.toBinaryString(valor);
@@ -12,6 +14,7 @@ public class Conversor {
         return binario;
     }
 
+    //Converte ArrayList com os binários em Integer
     public static Integer binToInt(ArrayList<Integer> valor){
         Integer numero = 0;
         Integer aux = 2;
@@ -23,6 +26,7 @@ public class Conversor {
         return numero;
     }
 
+    //Realiza um shift right de acordo com um Inteiro de shift
     public static ArrayList<Integer> shiftRight(Integer shift, ArrayList<Integer> conteudo){
         ArrayList<Integer> aux = new ArrayList<>();
         aux.addAll(conteudo);
@@ -33,6 +37,7 @@ public class Conversor {
         return aux;
     }
 
+    //Replica um valor n vezes e insere em um ArrayList 
     public static ArrayList<Integer> replicar(Integer nReplicacoes, Integer valor){
         ArrayList<Integer> aux = new ArrayList<>();
         for(int i = 0; i < nReplicacoes; i++){
@@ -41,6 +46,7 @@ public class Conversor {
         return aux;
     }
 
+    //Concatena dois ArrayLists de Integer
     public static ArrayList<Integer> concatenarArray(ArrayList<Integer> array1, ArrayList<Integer> array2){
         ArrayList<Integer> aux = new ArrayList<>();
         aux.addAll(array1);

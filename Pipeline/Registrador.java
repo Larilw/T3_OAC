@@ -7,6 +7,7 @@ public class Registrador {
     ArrayList<Integer> conteudo;
     Integer tamanho;
 
+    //Inicializa um registrador de acordo com seu tamanho com 0
     Registrador(Integer tamanho){
         this.conteudo = new ArrayList<>(tamanho);
         this.tamanho = tamanho;
@@ -21,11 +22,12 @@ public class Registrador {
 
     void setConteudo(ArrayList<Integer> conteudo){
         int j = this.tamanho - 1;
-        for(int i = conteudo.size() - 1; i > 0; i--){
+        for(int i = conteudo.size() - 1; i >= 0; i--){
             this.conteudo.set(j--, conteudo.get(i));
         }
     }
 
+    //Retorna um ArrayList com o intervalo contido entre pinicial e pfinal
     ArrayList<Integer> getBits(Integer pinicial, Integer pfinal){
         ArrayList<Integer> aux = new ArrayList<>();
         for(int i = pinicial; i <= pfinal; i++){
@@ -34,6 +36,7 @@ public class Registrador {
         return aux;
     }
 
+    //Realiza a comparação entre ArrayLists
     Boolean compareTo(ArrayList<Integer> op){
         if(Conversor.binToInt(op) == Conversor.binToInt(this.conteudo)){
             return true;
@@ -41,6 +44,7 @@ public class Registrador {
         else return false;
     }
 
+    //Incrementa n vezes no valor do registrador
     void inc(Integer n){
         Integer conteudo = Conversor.binToInt(this.conteudo);
         conteudo += n;
